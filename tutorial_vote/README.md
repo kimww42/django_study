@@ -129,3 +129,48 @@ from .models import Question
 
 admin.site.register(Question)
 ```
+<br>
+<img width="70%" alt="image" src="https://user-images.githubusercontent.com/23449575/220406732-786854c7-79ed-4077-9c85-45a93b30afea.png">
+
+## 뷰 추가
+1. 투표목록(index)
+2. 투표상세(detail)
+3. 투표기능(vote)
+4. 투표결과(results)
+
+<b>polls/views.py</b>
+```
+from django.http import HttpResponse
+
+from polls.models import Question
+
+
+def index(request):
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    output = ', '.join([q.question_text for q in latest_question_list])
+    return HttpResponse(output)
+
+def detail(request, question_id):
+    return HttpResponse("youre looking at question %s" % question_id)
+
+def results(request, question_id):
+    response = "you're looking at the result of qeustion %s"
+    return HttpResponse(response % question_id)
+
+def vote(request, question_id):
+    return HttpResponse("youre voting on question %s" % question_id)
+```
+
+<b>polls/urls.py</b>
+```
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('<int:question_id>/', views.detail, name='detail'),
+    path('<int:question_id>/results/', views.results, name='results'),
+    path('<int:question_id>/vote/', views.vote, name='vote'),
+]
+```
+
